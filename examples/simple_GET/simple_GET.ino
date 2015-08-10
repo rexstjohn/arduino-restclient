@@ -3,35 +3,34 @@
  * by Chris Continanza (csquared)
  */
 
-#include <Ethernet.h>
+#include <WiFi.h>
 #include <SPI.h>
 #include "RestClient.h"
 
-RestClient client = RestClient("arduino-http-lib-test.herokuapp.com");
-
-//Setup
-void setup() {
-  Serial.begin(9600);
-  // Connect via DHCP
-  Serial.println("connect to network");
-  client.dhcp();
-/*
-  // Can still fall back to manual config:
-  byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
-  //the IP address for the shield:
-  byte ip[] = { 192, 168, 2, 11 };
-  Ethernet.begin(mac,ip);
-*/
-  Serial.println("Setup!");
-}
+char ssid[] = "YOUR_SSID";            //  your network SSID (name)
+char pass[] = "YOUR_WIFI_PW";         // your network password
+int status = WL_IDLE_STATUS;          // the Wifi radio's status
+RestClient client = RestClient("google.com", ssid, pass);
 
 String response;
-void loop(){
-  response = "";
-  int statusCode = client.get("/get", &response);
-  Serial.print("Status code from server: ");
-  Serial.println(statusCode);
-  Serial.print("Response body from server: ");
-  Serial.println(response);
-  delay(1000);
+void setup() {
+
+  // Initiate Serial Connection
+  Serial.begin(9600);
+  Serial.println("Starting REST client over Wi-Fi");
+  if(client.connect() == WL_CONNECTED){
+    
+    Serial.println("Starting REST client over Wi-Fi");
+    response = "";
+    int statusCode = client.get("/?search=arduino", &response);
+    Serial.print("Status code from server: ");
+    Serial.println(statusCode);
+    Serial.print("Response body from server: ");
+    Serial.println(response);
+    delay(1000);
+  }
 }
+
+void loop(){
+}
+
