@@ -2,6 +2,8 @@
 
 HTTP Request library for Arduino and the WiFi shield. I modified the original Ethernet-only version to use on Intel Edison, should work fine with other Arduino WiFi devices though.
 
+I think aJSON would be really helpful to integrate as a next step.
+
 # Install
 
 Clone (or download and unzip) the repository to `~/Documents/Arduino/libraries`
