@@ -1,40 +1,33 @@
 #include "RestClient.h"
 
-#ifdef HTTP_DEBUG
-#define HTTP_DEBUG_PRINT(string) (Serial.print(string))
-#endif
-
-#ifndef HTTP_DEBUG
-#define HTTP_DEBUG_PRINT(string)
-#endif
-
-RestClient::RestClient(const char* _host){
+RestClient::RestClient(const char* _host, const char* _ssid, const char* _pw){
   host = _host;
   port = 80;
+  ssid = _ssid;
+  pw = _pw;
   num_headers = 0;
   contentType = "x-www-form-urlencoded";	// default
 }
 
-RestClient::RestClient(const char* _host, int _port){
-  host = _host;
-  port = _port;
-  num_headers = 0;
-  contentType = "x-www-form-urlencoded";	// default
-}
-
-void RestClient::dhcp(){
-  byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
-  if (begin(mac) == 0) {
-    Serial.println("Failed to configure Ethernet using DHCP");
+int RestClient::connect(){
+  int status = begin((char*)ssid,(char*)pw);
+  if (status != WL_CONNECTED) {
+    Serial.println("Failed to configure WIFI using provided ssid, pw");
+  } else {
+    Serial.println("Connected to WiFi!");
   }
-  //give it time to initialize
-  delay(1000);
+  return status;
 }
 
-int RestClient::begin(byte mac[]){
-  return Ethernet.begin(mac);
+int RestClient::begin(char* _ssid, char* _pw){
   //give it time to initialize
-  delay(1000);
+  Serial.print("Attempting to connect to SSID:");
+  Serial.println(_ssid);
+  Serial.print("Attempting to connect to SSID PW:");
+  Serial.println(_pw);
+  int status = WL_IDLE_STATUS;
+  status = WiFi.begin(_ssid, _pw);
+  return status;
 }
 
 // GET path
@@ -88,7 +81,7 @@ int RestClient::del(const char* path, const char* body, String* response){
 }
 
 void RestClient::write(const char* string){
-  HTTP_DEBUG_PRINT(string);
+  Serial.println(string);
   client.print(string);
 }
 
@@ -106,11 +99,12 @@ void RestClient::setContentType(const char* contentTypeValue){
 int RestClient::request(const char* method, const char* path,
                   const char* body, String* response){
 
-  HTTP_DEBUG_PRINT("HTTP: connect\n");
+  Serial.println("HTTP: connect\n");
 
   if(client.connect(host, port)){
-    HTTP_DEBUG_PRINT("HTTP: connected\n");
-    HTTP_DEBUG_PRINT("REQUEST: \n");
+
+    Serial.println("HTTP: connected\n");
+    Serial.println("REQUEST: \n");
     // Make a HTTP request line:
     write(method);
     write(" ");
@@ -146,20 +140,20 @@ int RestClient::request(const char* method, const char* path,
     //make sure you write all those bytes.
     delay(100);
 
-    HTTP_DEBUG_PRINT("HTTP: call readResponse\n");
+    Serial.println("HTTP: call readResponse\n");
     int statusCode = readResponse(response);
-    HTTP_DEBUG_PRINT("HTTP: return readResponse\n");
+    Serial.println("HTTP: return readResponse\n");
 
     //cleanup
-    HTTP_DEBUG_PRINT("HTTP: stop client\n");
+    Serial.println("HTTP: stop client\n");
     num_headers = 0;
     client.stop();
     delay(50);
-    HTTP_DEBUG_PRINT("HTTP: client stopped\n");
+    Serial.println("HTTP: client stopped\n");
 
     return statusCode;
   }else{
-    HTTP_DEBUG_PRINT("HTTP Connection failed\n");
+    Serial.println("HTTP Connection failed\n");
     return 0;
   }
 }
@@ -176,20 +170,17 @@ int RestClient::readResponse(String* response) {
   int code = 0;
 
   if(response == NULL){
-    HTTP_DEBUG_PRINT("HTTP: NULL RESPONSE POINTER: \n");
+    Serial.println("HTTP: NULL RESPONSE POINTER: \n");
   }else{
-    HTTP_DEBUG_PRINT("HTTP: NON-NULL RESPONSE POINTER: \n");
+    Serial.println("HTTP: NON-NULL RESPONSE POINTER: \n");
   }
 
-  HTTP_DEBUG_PRINT("HTTP: RESPONSE: \n");
+  Serial.println("HTTP: RESPONSE: \n");
   while (client.connected()) {
-    HTTP_DEBUG_PRINT(".");
 
     if (client.available()) {
-      HTTP_DEBUG_PRINT(",");
 
       char c = client.read();
-      HTTP_DEBUG_PRINT(c);
 
       if(c == ' ' && !inStatus){
         inStatus = true;
@@ -226,6 +217,6 @@ int RestClient::readResponse(String* response) {
     }
   }
 
-  HTTP_DEBUG_PRINT("HTTP: return readResponse3\n");
+  Serial.println("HTTP: return readResponse3\n");
   return code;
 }
