@@ -1,37 +1,32 @@
-/* RestClient simple GET request
- *
- * by Chris Continanza (csquared)
- */
-
-#include <Ethernet.h>
+#include <WiFi.h>
 #include <SPI.h>
 #include "RestClient.h"
 
-RestClient client = RestClient("arduino-http-lib-test.herokuapp.com");
+char ssid[] = "YOUR_SSID";            //  your network SSID (name)
+char pass[] = "YOUR_WIFI_PW";         // your network password
+char host[] = "jsonplaceholder.typicode.com";      // target for your REST queries
+int status = WL_IDLE_STATUS;         // the Wifi radio's status
 
-//Setup
-void setup() {
-  Serial.begin(9600);
-  // Connect via DHCP
-  Serial.println("connect to network");
-  client.dhcp();
-/*
-  // Can still fall back to manual config:
-  byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
-  //the IP address for the shield:
-  byte ip[] = { 192, 168, 2, 11 };
-  Ethernet.begin(mac,ip);
-*/
-  Serial.println("Setup!");
-}
+// Create your WiFi RestClient, pass in the ssid and password.
+RestClient client = RestClient(host, ssid, pass);
 
 String response;
+void setup() {
+
+  // Initiate Serial Connection
+  Serial.begin(9600);
+  Serial.println("Starting REST client over Wi-Fi");
+  if(client.connect() == WL_CONNECTED){
+    response = "";
+    int statusCode = client.post("/posts", "POSTDATA", &response);
+    Serial.print("Status code from server: ");
+    Serial.println(statusCode);
+    Serial.print("Response body from server: ");
+    Serial.println(response);
+    delay(1000);
+  }
+}
+
 void loop(){
-  response = "";
-  int statusCode = client.post("/data", "POSTDATA", &response);
-  Serial.print("Status code from server: ");
-  Serial.println(statusCode);
-  Serial.print("Response body from server: ");
-  Serial.println(response);
-  delay(1000);
+  // 
 }
