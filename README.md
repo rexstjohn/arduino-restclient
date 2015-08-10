@@ -10,7 +10,7 @@ where `~/Documents/Arduino` is your sketchbook directory.
     > cd ~/Documents/Arduino
     > mkdir libraries
     > cd libraries
-    > git clone https://github.com/csquared/arduino-restclient.git RestClient
+    > git clone https://github.com/rexstjohn/arduino-restclient.git RestClient
 
 # Usage
 
@@ -30,7 +30,7 @@ Constructor to create an RestClient object to make requests against.
 
 Use domain name and default to port 80, add your WiFi SSID and password:
 ```c++
-RestClient client = RestClient("arduino-http-lib-test.herokuapp.com, SSID, PW");
+RestClient client = RestClient("google.com", SSID, PW);
 ```
 
 ### connect()
@@ -120,8 +120,3 @@ If you're having trouble, you can always open `RestClient.cpp` and throw at the 
 
 Everything happening in the client will get printed to the Serial port.
 
-# Thanks
-
-[ricardochimal](https://github.com/ricardochimal) For all his c++ help.  Couldn't have done this without you!
-
-[theycallmeswift](https://github.com/theycallmeswift) Helping incept and debug v1.0
