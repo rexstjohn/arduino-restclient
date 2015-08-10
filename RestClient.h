@@ -1,16 +1,15 @@
 #include <Arduino.h>
 #include <SPI.h>
-#include <Ethernet.h>
+#include <Wifi.h>
 
 class RestClient {
 
   public:
-    RestClient(const char* host);
-    RestClient(const char* _host, int _port);
+    RestClient(const char* host,const char* _ssid,const char* _pw);
 
     //Client Setup
-    void dhcp();
-    int begin(byte*);
+    int connect();
+    int begin(char*, char*);
 
     //Generic HTTP Request
     int request(const char* method, const char* path,
@@ -45,10 +44,12 @@ class RestClient {
     int del(const char*, const char*, String*);
 
   private:
-    EthernetClient client;
+    WiFiClient client;
     int readResponse(String*);
     void write(const char*);
     const char* host;
+    const char* ssid;
+    const char* pw;
     int port;
     int num_headers;
     const char* headers[10];
