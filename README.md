@@ -1,6 +1,6 @@
 # RestClient for Arduino
 
-HTTP Request library for Arduino and the Ethernet shield.
+HTTP Request library for Arduino and the WiFi shield.
 
 # Install
 
@@ -16,10 +16,10 @@ where `~/Documents/Arduino` is your sketchbook directory.
 
 ### Include
 
-You need to have the `Ethernet` library already included.
+You need to have the `WiFi` library already included.
 
 ```c++
-#include <Ethernet.h>
+#include <WiFi.h>
 #include <SPI.h>
 #include "RestClient.h"
 ```
@@ -28,22 +28,17 @@ You need to have the `Ethernet` library already included.
 
 Constructor to create an RestClient object to make requests against.
 
-Use domain name and default to port 80:
+Use domain name and default to port 80, add your WiFi SSID and password:
 ```c++
-RestClient client = RestClient("arduino-http-lib-test.herokuapp.com");
+RestClient client = RestClient("arduino-http-lib-test.herokuapp.com, SSID, PW");
 ```
 
-Use a local IP and an explicit port:
-```c++
-RestClient client = RestClient("192.168.1.50",5000);
-```
+### connect()
 
-### dhcp()
-
-Sets up `EthernetClient` with a mac address of `DEADBEEFFEED`
+Sets up `WiFiClient` using the provided SSID and PW
 
 ```c++
-  client.dhcp()
+  client.connect()
 ```
 
 Note: you can have multiple RestClient objects but only need to call
@@ -52,35 +47,9 @@ this once.
 Note: if you have multiple Arduinos on the same network, you'll need
 to give each one a different mac address.
 
-### begin(byte mac[])
+### begin(char* ssid, char *pw)
 
-It just wraps the `EthernetClient` call to `begin` and DHCPs.
-Use this if you need to explicitly set the mac address.
-
-```c++
-  byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
-  if (client.begin(mac) == 0) {
-     Serial.println("Failed to configure Ethernet using DHCP");
-  }
-```
-
-### Manual Ethernet Setup
-
-You can skip the above methods and just configure the EthernetClient yourself:
-
-```c++
-  byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
-  //the IP address for the shield:
-  byte ip[] = { 192, 168, 2, 11 };
-  Ethernet.begin(mac,ip);
-```
-
-```c++
-  byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
-  Ethernet.begin(mac);
-```
-
-This is especially useful for debugging network connection issues.
+It just wraps the `WiFiClient` call to `begin` and connects.
 
 ## RESTful methods
 
