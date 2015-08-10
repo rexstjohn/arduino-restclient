@@ -6,7 +6,7 @@ RestClient::RestClient(const char* _host, const char* _ssid, const char* _pw){
   ssid = _ssid;
   pw = _pw;
   num_headers = 0;
-  contentType = "x-www-form-urlencoded";	// default
+  contentType = "x-www-form-urlencoded";  // default
 }
 
 int RestClient::connect(){
@@ -99,11 +99,7 @@ void RestClient::setContentType(const char* contentTypeValue){
 int RestClient::request(const char* method, const char* path,
                   const char* body, String* response){
 
-  Serial.println("HTTP: connect\n");
-
   if(client.connect(host, port)){
-
-    Serial.println("HTTP: connected\n");
     Serial.println("REQUEST: \n");
     // Make a HTTP request line:
     write(method);
@@ -124,9 +120,9 @@ int RestClient::request(const char* method, const char* path,
       sprintf(contentLength, "Content-Length: %d\r\n", strlen(body));
       write(contentLength);
 
-	  write("Content-Type: ");
-	  write(contentType);
-	  write("\r\n");
+    write("Content-Type: ");
+    write(contentType);
+    write("\r\n");
     }
 
     write("\r\n");
@@ -139,21 +135,16 @@ int RestClient::request(const char* method, const char* path,
 
     //make sure you write all those bytes.
     delay(100);
-
-    Serial.println("HTTP: call readResponse\n");
     int statusCode = readResponse(response);
-    Serial.println("HTTP: return readResponse\n");
 
     //cleanup
-    Serial.println("HTTP: stop client\n");
     num_headers = 0;
     client.stop();
     delay(50);
-    Serial.println("HTTP: client stopped\n");
 
     return statusCode;
   }else{
-    Serial.println("HTTP Connection failed\n");
+    Serial.println("HTTP Connection failed");
     return 0;
   }
 }
@@ -170,17 +161,18 @@ int RestClient::readResponse(String* response) {
   int code = 0;
 
   if(response == NULL){
-    Serial.println("HTTP: NULL RESPONSE POINTER: \n");
+    Serial.println("HTTP: NULL RESPONSE POINTER: ");
   }else{
-    Serial.println("HTTP: NON-NULL RESPONSE POINTER: \n");
+    Serial.println("HTTP: NON-NULL RESPONSE POINTER: ");
   }
 
-  Serial.println("HTTP: RESPONSE: \n");
+  Serial.println("HTTP: RESPONSE: ");
   while (client.connected()) {
 
     if (client.available()) {
-
+      Serial.print(",");
       char c = client.read();
+      Serial.print(c);
 
       if(c == ' ' && !inStatus){
         inStatus = true;
@@ -217,6 +209,6 @@ int RestClient::readResponse(String* response) {
     }
   }
 
-  Serial.println("HTTP: return readResponse3\n");
+  Serial.println("HTTP: return readResponse");
   return code;
 }
