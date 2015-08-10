@@ -1,6 +1,6 @@
-# RestClient for Arduino
+# WiFi RestClient for Arduino
 
-HTTP Request library for Arduino and the WiFi shield.
+HTTP Request library for Arduino and the WiFi shield. I modified the original Ethernet-only version to use on Intel Edison, should work fine with other Arduino WiFi devices though.
 
 # Install
 
