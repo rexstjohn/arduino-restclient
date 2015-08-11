@@ -106,19 +106,5 @@ String response = "";
 int statusCode = client.del("/", &response);
 ```
 
-## Full Example
 
-I test every way of calling the library (against a public heroku app)[https://github.com/csquared/arduino-http-test].
-
-You can find the file in File->Examples->RestClient->full_test_suite
-
-## Debug Mode
-
-If you're having trouble, you can always open `RestClient.cpp` and throw at the top:
-
-```c++
-#define HTTP_DEBUG
-```
-
-Everything happening in the client will get printed to the Serial port.
 
