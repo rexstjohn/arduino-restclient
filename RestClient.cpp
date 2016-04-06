@@ -206,7 +206,7 @@ int RestClient::readResponse(String* response) {
             currentLineIsBlank = false;
           }
       }
-    }
+    } else break;
   }
 
   Serial.println("HTTP: return readResponse");
